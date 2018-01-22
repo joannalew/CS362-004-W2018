@@ -6,29 +6,6 @@
 #include <stdlib.h>
 
 
-// NEW: card functions for assignment 2
-
-
-int smithyCardEffect(int currentPlayer, struct gameState *state, int handPos){
-    //+3 Cards
-    for (i = 0; i < 3; i++)
-    {
-        drawCard(currentPlayer, state);
-    }
-    
-    //discard card from hand
-    discardCard(handPos, currentPlayer, state, 0);
-    return 0;
-}
-
-
-
-
-
-
-
-// OLD: default code
-
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
     return 1;
@@ -666,6 +643,65 @@ int getCost(int cardNumber)
 	
   return -1;
 }
+
+
+
+
+/**  NEW: card functions for assignment 2  **/
+
+// 1. Smithy
+int smithyCardEffect(int currentPlayer, struct gameState *state, int handPos){
+    //+3 Cards
+    for (i = 0; i < 3; i++)
+    {
+        drawCard(currentPlayer, state);
+    }
+    
+    //discard card from hand
+    discardCard(handPos, currentPlayer, state, 0);
+    return 0;
+}
+
+// 2. Council Room
+int councilRoomCardEffect(int currentPlayer, struct gameState *state, int handPos){
+    //+4 Cards
+    for (i = 0; i < 4; i++)
+    {
+        drawCard(currentPlayer, state);
+    }
+    
+    //+1 Buy
+    state->numBuys++;
+    
+    //Each other player draws a card
+    for (i = 0; i < state->numPlayers; i++)
+    {
+        if ( i != currentPlayer )
+        {
+            drawCard(i, state);
+        }
+    }
+    
+    //put played card in played card pile
+    discardCard(handPos, currentPlayer, state, 0);
+    return 0;
+}
+
+// 3. Village
+int villageCardEffect(int currentPlayer, struct gameState *state, int handPos){
+    //+1 Card
+    drawCard(currentPlayer, state);
+    
+    //+2 Actions
+    state->numActions = state->numActions + 2;
+    
+    //discard played card from hand
+    discardCard(handPos, currentPlayer, state, 0);
+    return 0;
+}
+
+
+
 
 int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus)
 {
