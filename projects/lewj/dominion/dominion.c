@@ -656,7 +656,8 @@ int adventurerCardEffect(int currentPlayer, struct gameState *state, int handPos
     int cardDrawn;
     int z = 0;              // this is the counter for the temp hand
     
-    while(drawntreasure < 2){
+    // BUG: while loop comparison wrong; does nothing
+    while(drawntreasure > 2){
         //if the deck is empty we need to shuffle discard and add to deck
         if (state->deckCount[currentPlayer] < 1){
             shuffle(currentPlayer, state);
@@ -677,7 +678,7 @@ int adventurerCardEffect(int currentPlayer, struct gameState *state, int handPos
     }
     while(z - 1 >= 0){
         // discard all cards in play that have been drawn
-        state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1];
+        state->discard[currentPlayer][state->discardCount[currentPlayer]++] = temphand[z-1];
         z = z - 1;
     }
     return 0;
@@ -685,9 +686,11 @@ int adventurerCardEffect(int currentPlayer, struct gameState *state, int handPos
 
 // 2. Smithy
 int smithyCardEffect(int currentPlayer, struct gameState *state, int handPos){
-    //+3 Cards
     int i;
-    for (i = 0; i < 3; i++)
+    
+    //+3 Cards
+    // BUG: player gets additional card
+    for (i = 0; i <= 3; i++)
     {
         drawCard(currentPlayer, state);
     }
@@ -712,10 +715,8 @@ int councilRoomCardEffect(int currentPlayer, struct gameState *state, int handPo
     //Each other player draws a card
     for (i = 0; i < state->numPlayers; i++)
     {
-        if ( i != currentPlayer )
-        {
-            drawCard(i, state);
-        }
+        // BUG: player gets additional card
+        drawCard(i, state);
     }
     
     //put played card in played card pile
@@ -731,8 +732,7 @@ int villageCardEffect(int currentPlayer, struct gameState *state, int handPos){
     //+2 Actions
     state->numActions = state->numActions + 2;
     
-    //discard played card from hand
-    discardCard(handPos, currentPlayer, state, 0);
+    // BUG: no discard
     return 0;
 }
 
@@ -744,7 +744,8 @@ int remodelCardEffect(int currentPlayer, struct gameState *state, int handPos, i
     //store card we will trash
     j = state->hand[currentPlayer][choice1];
     
-    if ( (getCost(state->hand[currentPlayer][choice1]) + 2) > getCost(choice2) )
+    // BUG: players can only get cards of 2 fewer cost (or less)
+    if ( getCost(state->hand[currentPlayer][choice1]) > (getCost(choice2) + 2) )
     {
         return -1;
     }
