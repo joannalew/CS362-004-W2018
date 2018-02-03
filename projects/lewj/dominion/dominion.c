@@ -767,7 +767,7 @@ int remodelCardEffect(int currentPlayer, struct gameState *state, int handPos, i
     return 0;
 }
 
-/**  END card effect functions  **/
+/**  END: card effect functions  **/
 
 
 
