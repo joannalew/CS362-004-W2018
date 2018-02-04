@@ -125,7 +125,7 @@ int main () {
     G.hand[p][0] = smithy;
     
     if (checkSmithyCard(p, &G, 0) == 0){
-        printf("All tests passed!");
+        printf("All tests passed!\n");
     }
     
     return 0;

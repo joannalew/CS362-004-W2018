@@ -657,7 +657,7 @@ int adventurerCardEffect(int currentPlayer, struct gameState *state, int handPos
     int z = 0;              // this is the counter for the temp hand
     
     // BUG: while loop comparison wrong; does nothing
-    while(drawntreasure > 2){
+    while(drawntreasure < 2){
         //if the deck is empty we need to shuffle discard and add to deck
         if (state->deckCount[currentPlayer] < 1){
             shuffle(currentPlayer, state);

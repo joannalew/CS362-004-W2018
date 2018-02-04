@@ -30,6 +30,9 @@ cardtest2: cardtest2.c dominion.o rngs.o
 cardtest3: cardtest3.c dominion.o rngs.o
 	gcc -o cardtest3 -g  cardtest3.c dominion.o rngs.o $(CFLAGS)
 
+cardtest4: cardtest4.c dominion.o rngs.o
+	gcc -o cardtest4 -g  cardtest4.c dominion.o rngs.o $(CFLAGS)
+
 unittest1: unittest1.c dominion.o rngs.o
 	gcc -o unittest1 -g  unittest1.c dominion.o rngs.o $(CFLAGS)
 
@@ -66,4 +69,4 @@ clean:
 	unittest1 unittest1.exe unittest2 unittest2.exe \
 	unittest3 unittest3.exe unittest4 unittest4.exe \
 	cardtest1 cardtest1.exe cardtest2 cardtest2.exe \
-	cardtest3 cardtest3.exe
+	cardtest3 cardtest3.exe cardtest4 cardtest4.exe
