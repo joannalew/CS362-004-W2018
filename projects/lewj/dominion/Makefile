@@ -21,6 +21,9 @@ testBuyCard: testDrawCard.c dominion.o rngs.o
 testUpdateCoins: testUpdateCoins.c dominion.o rngs.o
 	gcc -o testUpdateCoins -g  testUpdateCoins.c dominion.o rngs.o $(CFLAGS)
 
+cardtest1: cardtest1.c dominion.o rngs.o
+	gcc -o cardtest1 -g  cardtest1.c dominion.o rngs.o $(CFLAGS)
+
 unittest1: unittest1.c dominion.o rngs.o
 	gcc -o unittest1 -g  unittest1.c dominion.o rngs.o $(CFLAGS)
 
@@ -55,4 +58,5 @@ clean:
 	*.gcov *.gcda *.gcno *.so *.out \
 	testDrawCard testDrawCard.exe testUpdateCoins testUpdateCoins.exe \
 	unittest1 unittest1.exe unittest2 unittest2.exe \
-	unittest3 unittest3.exe unittest4 unittest4.exe
+	unittest3 unittest3.exe unittest4 unittest4.exe \
+	cardtest1 cardtest1.exe
