@@ -17,10 +17,19 @@
 #include "rngs.h"
 
 // set NOISY_TEST to 0 to remove printfs from output
-#define NOISY_TEST 1
+#define NOISY_TEST 0
 
+int sudoAssert(int test){
+    if (test)
+        return 0;
+    else
+        return 1;
+}
 
 int main() {
+    int checker = 0;
+    int totalFailed = 0;
+    
     int i, j, p, r;
     int handCount, deckCount, discardCount;
     int maxHand = 5, maxDeck = 30, maxDiscard = 30;
@@ -40,13 +49,17 @@ int main() {
     
     
     // test kingdom cards not in starting deck
-#if (NOISY_TEST == 1)
-    printf("Kingdom cards NOT in starting deck\n");
-#endif
+    printf("Testing kingdom cards NOT in starting deck\n");
     
     for (i = 0; i < numCards; i++){
         p = G.whoseTurn;
-        assert(fullDeckCount(p, k[i], &G) == 0);
+        checker += sudoAssert((fullDeckCount(p, k[i], &G) == 0));
+    }
+    
+    if (checker > 0){
+        printf("Failed test: kingdom cards in starting deck");
+        checker = 0;
+        totalFailed++;
     }
     
     // change each card in full deck to available kingdom cards
@@ -54,8 +67,10 @@ int main() {
     for (int i = 0; i < numCards; i++){
         total = 0;
         
-        j = 0;
         // change each card in hand
+        printf("(Card %d) Testing kingdom cards in hand\n", k[i]);
+        
+        j = 0;
         for (handCount = 0; handCount <= maxHand; handCount++){
             G.handCount[p] = handCount;
             G.hand[p][j++] = k[i];
@@ -63,11 +78,19 @@ int main() {
 #if (NOISY_TEST == 1)
             printf("(Card %d) fullDeckCount = %d, expected %d\n", k[i], fullDeckCount(p, k[i], &G), total);
 #endif
-            assert(fullDeckCount(p, k[i], &G) == total);
+            checker += sudoAssert((fullDeckCount(p, k[i], &G) == total));
         }
         
-        j = 0;
+        if (checker > 0){
+            printf("Failed test: cards in hand counted incorrectly");
+            checker = 0;
+            totalFailed++;
+        }
+        
         // change each card in deck
+        printf("(Card %d) Testing kingdom cards in deck\n", k[i]);
+        
+        j = 0;
         for (deckCount = 0; deckCount <= maxDeck; deckCount++){
             G.deckCount[p] = deckCount;
                 G.deck[p][j++] = k[i];
@@ -75,11 +98,19 @@ int main() {
 #if (NOISY_TEST == 1)
             printf("(Card %d) fullDeckCount = %d, expected %d\n", k[i], fullDeckCount(p, k[i], &G), total);
 #endif
-            assert(fullDeckCount(p, k[i], &G) == total);
+            checker += sudoAssert((fullDeckCount(p, k[i], &G) == total));
         }
         
-        j = 0;
+        if (checker > 0){
+            printf("Failed test: cards in deck counted incorrectly");
+            checker = 0;
+            totalFailed++;
+        }
+        
         // change each card in discard
+        printf("(Card %d) Testing kingdom cards in discard\n", k[i]);
+        
+        j = 0;
         for (discardCount = 0; discardCount <= maxDiscard; discardCount++){
             G.discardCount[p] = discardCount;
                 G.discard[p][j++] = k[i];
@@ -87,21 +118,33 @@ int main() {
 #if (NOISY_TEST == 1)
             printf("(Card %d) fullDeckCount = %d, expected %d\n", k[i], fullDeckCount(p, k[i], &G), total);
 #endif
-            assert(fullDeckCount(p, k[i], &G) == total);
+            checker += sudoAssert((fullDeckCount(p, k[i], &G) == total));
         }
         
+        if (checker > 0){
+            printf("Failed test: cards in discard counted incorrectly");
+            checker = 0;
+            totalFailed++;
+        }
     }
     
     // test that non-available kingdom card not in deck
     // (current card range: 7-16)
+    printf("Testing unavailable kingdom cards NOT in deck\n");
+    
 #if (NOISY_TEST == 1)
     printf("(Card %d) fullDeckCount = %d, expected %d\n", 20, fullDeckCount(p, k[i], &G), 0);
 #endif
-    assert(fullDeckCount(p, 20, &G) == 0);
+    checker += sudoAssert((fullDeckCount(p, 20, &G) == 0));
     
+    if (checker > 0){
+        printf("Failed test: unavailable kingdom cards in deck");
+        checker = 0;
+        totalFailed++;
+    }
     
-    
-    printf("All tests passed!\n");
+    if (totalFailed == 0)
+        printf("All tests passed!\n");
 
     return 0;
 }
