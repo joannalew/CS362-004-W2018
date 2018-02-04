@@ -18,10 +18,20 @@
 #include "rngs.h"
 
 // set NOISY_TEST to 0 to remove printfs from output
-#define NOISY_TEST 1
+#define NOISY_TEST 0
+
+int sudoAssert(int test){
+    if (test)
+        return 0;
+    else
+        return 1;
+}
 
 
 int main() {
+    int checker = 0;
+    int totalFailed = 0;
+    
     int i, p, r, handCount;
     int numPlayer;
     int seed = 1000;
@@ -30,28 +40,35 @@ int main() {
     
     printf ("TESTING numHandCards():\n");
     
-    
-    for (i = 0; i <= MAX_PLAYERS; i++){                     // test for every possible num of players
+    // test for every num of players
+    for (i = 0; i <= MAX_PLAYERS; i++){
         numPlayer = i;
-#if (NOISY_TEST == 1)
-        printf("\nNumber of Players: %d\n", numPlayer);
-#endif
-        memset(&G, 23, sizeof(struct gameState));           // clear the game state
-        r = initializeGame(numPlayer, k, seed, &G);         // initialize a new game
+        printf("Testing for %d players\n", numPlayer);
         
-        for (p = 0; p < numPlayer; p++){                                // for each player in game
-            for (handCount = 0; handCount < MAX_HAND; handCount++){     // test every possible hand count
+        memset(&G, 23, sizeof(struct gameState));                       // clear the game state
+        r = initializeGame(numPlayer, k, seed, &G);                     // initialize a new game
+        
+        // for each player in game
+        // test every possible hand count [0 ... MAX_HAND)
+        for (p = 0; p < numPlayer; p++){
+            for (handCount = 0; handCount < MAX_HAND; handCount++){
                 G.handCount[p] = handCount;
                 G.whoseTurn = p;
 #if (NOISY_TEST == 1)
                 printf("(Player %d) G.handCount = %d, expected = %d\n", p, numHandCards(&G), handCount);
 #endif
-                assert(numHandCards(&G) == handCount);
+                checker += sudoAssert((numHandCards(&G) == handCount));
             }
+        }
+        
+        if (checker > 0){
+            printf("Test failed for %d players\n", numPlayer);
+            totalFailed++;
         }
     }
     
-    printf("All tests passed!\n");
+    if (totalFailed == 0)
+        printf("All tests passed!\n");
 
     return 0;
 }
