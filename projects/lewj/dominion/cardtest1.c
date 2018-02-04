@@ -43,6 +43,7 @@ int checkSmithyCard(int p, struct gameState *post, int handPos){
     }
     
     // do "manual" Smithy effect on PRE gamestate
+    
     // draw three cards
     for (i = 0; i < 3; i++){
         // if there's a card in deck
@@ -81,12 +82,11 @@ int checkSmithyCard(int p, struct gameState *post, int handPos){
     else if (pre.handCount[p] == 1){
         pre.handCount[p]--;
     }
+    // otherwise, replace discarded card with last card in hand
+    // set last card to -1, and reduce number of cards in hand
     else {
-        //replace discarded card with last card in hand
         pre.hand[p][handPos] = pre.hand[p][(pre.handCount[p] - 1)];
-        //set last card to -1
         pre.hand[p][pre.handCount[p] - 1] = -1;
-        //reduce number of cards in hand
         pre.handCount[p]--;
     }
     
@@ -121,9 +121,12 @@ int main () {
     memset(G.discard[p], 0, sizeof(int) * maxDiscard);
     
     // change first card in hand to Smithy
+    printf("TESTING Smithy card effect\n");
     G.hand[p][0] = smithy;
     
-    printf("%d\n", checkSmithyCard(p, &G, 0));
+    if (checkSmithyCard(p, &G, 0) == 0){
+        printf("All tests passed!");
+    }
     
     return 0;
 }
