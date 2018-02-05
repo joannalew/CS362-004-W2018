@@ -100,7 +100,7 @@ int checkSmithyCard(int p, struct gameState *post, int handPos){
 }
 
 int main () {
-    int i, r, p;
+    int r, p;
     int maxHand = 5, maxDeck = 20, maxDiscard = 20;
     int numPlayer = 2;
     int seed = 1000;
