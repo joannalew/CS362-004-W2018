@@ -147,8 +147,22 @@ int checkAdventurer(){
     memset(G.discard[p], k[card], sizeof(int) * maxDiscard);
     
     
-    G.deck[p][9] = gold;
-    G.deck[p][18] = copper;
+    // random number of treasures at some random indices
+    int numTreasures = rand() % 5;
+    int randIndex = -1;
+    int totalTreasures = 0;
+    
+    for (int i = 0; i < numTreasures; i++){
+        randIndex = rand() % G.deckCount[p];
+        card = G.deck[p][randIndex];
+        if (card != copper && card != silver && card != gold){
+            totalTreasures++;
+            G.deck[p][randIndex] = 4 + rand() % 3;          // copper = 4
+        }
+            
+    }
+    
+    printf("Number of treasures: %d\n", totalTreasures);
     
     // change first card in hand to Adventurer
     printf("TESTING Adventurer card effect\n");
@@ -180,8 +194,15 @@ int checkAdventurer(){
 
 int main () {
     srand(time(NULL));
+    int i;
+    int numTests = 50000;
+    int totalFailed = 0;
     
-    int a = checkAdventurer();
-    printf("checking: %d\n", a);
+    for (i = 0; i < numTests; i++){
+        printf("Test %d: ", i+1);
+        totalFailed += checkAdventurer();
+    }
+    
+    printf("\n%d/%d Tests Failed\n", totalFailed, numTests);
     return 0;
 }
