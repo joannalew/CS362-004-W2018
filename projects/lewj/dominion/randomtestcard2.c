@@ -1,11 +1,11 @@
 /* -----------------------------------------------------------------------
  * Joanna Lew
  * Assignment 4
- * Randomly Testing Smithy card effect from dominion.c
+ * Randomly Testing Village card effect from dominion.c
  * Include the following lines in your makefile:
  *
- * randomtestcard1: randomtestcard1.c dominion.o rngs.o
- *      gcc -o randomtestcard1 -g  randomtestcard1.c dominion.o rngs.o $(CFLAGS)
+ * randomtestcard2: randomtestcard2.c dominion.o rngs.o
+ *      gcc -o randomtestcard2 -g  randomtestcard2.c dominion.o rngs.o $(CFLAGS)
  * -----------------------------------------------------------------------
  */
 
@@ -26,55 +26,56 @@ int sudoAssert(int test){
 }
 
 
-// Smithy effect: +3 cards
-int checkSmithyCard(int p, struct gameState *post, int handPos){
+// Village effect: +1 card, +2 actions
+int checkVillageCard(int p, struct gameState *post, int handPos){
     int totalFailed = 0;
     
-    int i, r;
+    int r;
     struct gameState pre;
     memcpy (&pre, post, sizeof(struct gameState));
     
     // do cardEffect on POST gamestate
-    r = cardEffect(smithy, 0, 0, 0, post, handPos, 0);
+    r = cardEffect(village, 0, 0, 0, post, handPos, 0);
     
     if (r != 0){
-        printf("Error: Smithy cardEffect() failed\n");
+        printf("Error: Village cardEffect() failed\n");
         totalFailed++;
     }
     
-    // do "manual" Smithy effect on PRE gamestate
+    // do "manual" Village effect on PRE gamestate
     
-    // draw three cards
-    for (i = 0; i < 3; i++){
-        // if there's a card in deck
-        // put top card of deck in last position of hand
-        if (pre.deckCount[p] > 0) {
-            pre.handCount[p]++;
-            pre.hand[p][pre.handCount[p]-1] = pre.deck[p][pre.deckCount[p]-1];
-            pre.deckCount[p]--;
-        }
-        // if there's no card in deck, put the discard pile as deck
-        // put top card of deck in last position of hand
-        else if (pre.discardCount[p] > 0) {
-            memcpy(pre.deck[p], post->deck[p], sizeof(int) * pre.discardCount[p]);
-            memcpy(pre.discard[p], post->discard[p], sizeof(int)*pre.discardCount[p]);
-            pre.hand[p][post->handCount[p]-1] = post->hand[p][post->handCount[p]-1];
-            pre.handCount[p]++;
-            pre.deckCount[p] = pre.discardCount[p]-1;
-            pre.discardCount[p] = 0;
-        }
+    // draw a card
+    // if there's a card in deck
+    // put top card of deck in last position of hand
+    if (pre.deckCount[p] > 0) {
+        pre.handCount[p]++;
+        pre.hand[p][pre.handCount[p]-1] = pre.deck[p][pre.deckCount[p]-1];
+        pre.deckCount[p]--;
+    }
+    // if there's no card in deck, put the discard pile as deck
+    // put top card of deck in last position of hand
+    else if (pre.discardCount[p] > 0) {
+        memcpy(pre.deck[p], post->deck[p], sizeof(int) * pre.discardCount[p]);
+        memcpy(pre.discard[p], post->discard[p], sizeof(int)*pre.discardCount[p]);
+        pre.hand[p][post->handCount[p]-1] = post->hand[p][post->handCount[p]-1];
+        pre.handCount[p]++;
+        pre.deckCount[p] = pre.discardCount[p]-1;
+        pre.discardCount[p] = 0;
     }
     
-    // discard smithy card
-    // add smithy to played cards pile
+    // +2 actions
+    pre.numActions = pre.numActions + 2;
+    
+    // discard Village card
+    // add village to played cards pile
     pre.playedCards[pre.playedCardCount] = pre.hand[p][handPos];
     pre.playedCardCount++;
     
     // set value to -1
     pre.hand[p][handPos] = -1;
     
-    // if Smithy was last card in hand
-    // or if Smithy was the only card in hand
+    // if Village was last card in hand
+    // or if Vmithy was the only card in hand
     // reduce number of cards in hand
     if (handPos == (pre.handCount[p] - 1)){
         pre.handCount[p]--;
@@ -83,7 +84,7 @@ int checkSmithyCard(int p, struct gameState *post, int handPos){
         pre.handCount[p]--;
     }
     // otherwise, replace discarded card with last card in hand
-    // set last card to -1, and reduce number of cards in hand
+    // set last card to -1 and reduce number of cards in hand
     else {
         pre.hand[p][handPos] = pre.hand[p][(pre.handCount[p] - 1)];
         pre.hand[p][pre.handCount[p] - 1] = -1;
@@ -92,7 +93,7 @@ int checkSmithyCard(int p, struct gameState *post, int handPos){
     
     // compare cardEffect and manual implementation
     if (memcmp(&pre, post, sizeof(struct gameState)) != 0){
-        printf("Error: Smithy effect incorrect\n");
+        printf("Error: Village effect incorrect\n");
         totalFailed++;
     }
     
@@ -100,7 +101,8 @@ int checkSmithyCard(int p, struct gameState *post, int handPos){
 }
 
 
-int checkSmithy(){
+
+int checkVillage(){
     int failed = 0;
     int r, p;
     
@@ -141,13 +143,13 @@ int checkSmithy(){
     card = rand() % 10;
     memset(G.discard[p], k[card], sizeof(int) * maxDiscard);
     
-    // change first card in hand to Smithy
-    printf("TESTING Smithy card effect\n");
+    // change first card in hand to Village
+    printf("TESTING Village card effect\n");
     if (maxHand > 0){
-        G.hand[p][0] = smithy;
+        G.hand[p][0] = village;
         
-        if (maxDeck >= 3){
-            if (checkSmithyCard(p, &G, 0) == 0){
+        if (maxDeck >= 1){
+            if (checkVillageCard(p, &G, 0) == 0){
                 printf("All tests passed!\n");
             }
             else{
@@ -177,7 +179,7 @@ int main () {
     
     for (i = 0; i < numTests; i++){
         printf("Test %d: ", i+1);
-        totalFailed += checkSmithy();
+        totalFailed += checkVillage();
     }
     
     printf("\n%d/%d Tests Failed\n", totalFailed, numTests);

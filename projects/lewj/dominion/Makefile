@@ -32,6 +32,9 @@ runtests: testDrawCard
 randomtestcard1: randomtestcard1.c dominion.o rngs.o
 	gcc -o randomtestcard1 -g  randomtestcard1.c dominion.o rngs.o $(CFLAGS)
 
+randomtestcard2: randomtestcard2.c dominion.o rngs.o
+	gcc -o randomtestcard2 -g  randomtestcard2.c dominion.o rngs.o $(CFLAGS)
+
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
@@ -39,4 +42,5 @@ all: playdom player testDrawCard testBuyCard badTestDrawCard
 
 clean:
 	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out \
-	testDrawCard testDrawCard.exe randomtestcard1 randomtestcard1.exe
+	testDrawCard testDrawCard.exe randomtestcard1 randomtestcard1.exe \
+	randomtestcard2 randomtestcard2.exe
