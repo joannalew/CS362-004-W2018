@@ -199,7 +199,7 @@ int checkAdventurer(){
 int main () {
     srand(time(NULL));
     int i;
-    int numTests = 100;
+    int numTests = 10;
     int totalFailed = 0;
     
     for (i = 0; i < numTests; i++){
