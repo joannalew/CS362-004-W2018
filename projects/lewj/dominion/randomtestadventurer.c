@@ -115,6 +115,11 @@ int checkAdventurer(){
     int maxDiscard = rand() % MAX_DECK;
     int numPlayer = 1 + rand() % MAX_PLAYERS;
     
+    if (maxDeck == 0){
+        printf("Not enough cards in Deck.\n");
+        return 0;
+    }
+    
     printf("players: %d, hand: %d, deck: %d, discard: %d\n", numPlayer, maxHand, maxDeck, maxDiscard);
     
     int seed = 1000;
@@ -146,30 +151,29 @@ int checkAdventurer(){
     card = rand() % 10;
     memset(G.discard[p], k[card], sizeof(int) * maxDiscard);
     
-    
-    // random number of treasures at some random indices
-    int numTreasures = rand() % 5;
-    int randIndex = -1;
-    int totalTreasures = 0;
-    
-    for (int i = 0; i < numTreasures; i++){
-        randIndex = rand() % G.deckCount[p];
-        card = G.deck[p][randIndex];
-        if (card != copper && card != silver && card != gold){
-            totalTreasures++;
-            G.deck[p][randIndex] = 4 + rand() % 3;          // copper = 4
-        }
-            
-    }
-    
-    printf("Number of treasures: %d\n", totalTreasures);
-    
     // change first card in hand to Adventurer
     printf("TESTING Adventurer card effect\n");
     if (maxHand > 0){
         G.hand[p][0] = adventurer;
         
         if (maxDeck > 0){
+            // random number of treasures at some random indices
+            int numTreasures = rand() % 5;
+            int randIndex = -1;
+            int totalTreasures = 0;
+            
+            for (int i = 0; i < numTreasures; i++){
+                randIndex = rand() % G.deckCount[p];
+                
+                card = G.deck[p][randIndex];
+                if (card != copper && card != silver && card != gold){
+                    totalTreasures++;
+                    G.deck[p][randIndex] = 4 + rand() % 3;          // copper = 4
+                }
+            }
+            
+            printf("Number of treasures: %d\n", totalTreasures);
+            
             if (checkAdventurerCard(p, &G, 0) == 0){
                 printf("All tests passed!\n");
             }
@@ -195,7 +199,7 @@ int checkAdventurer(){
 int main () {
     srand(time(NULL));
     int i;
-    int numTests = 50000;
+    int numTests = 100;
     int totalFailed = 0;
     
     for (i = 0; i < numTests; i++){
