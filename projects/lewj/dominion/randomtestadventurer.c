@@ -25,9 +25,6 @@ int sudoAssert(int test){
         return 1;
 }
 
-// If there are two Treasures in player's deck,
-// Counting from DECK_MAX ... 0, find the index of the second Treasure
-// Returns -1 if 0 or 1 Treasures
 int discardIndex(int p, struct gameState *G){
     int i;
     int index = -1;
@@ -46,6 +43,7 @@ int discardIndex(int p, struct gameState *G){
             }
         }
     }
+    
     return index;
 }
 
@@ -109,14 +107,13 @@ int checkAdventurerCard(int p, struct gameState *post, int handPos){
 
 
 int checkAdventurer(){
-    int r, p, i;
-    int treasures = 0;
+    int r, p;
     
     // random game state
     int maxHand = rand() % MAX_HAND;
     int maxDeck = rand() % MAX_DECK;
     int maxDiscard = rand() % MAX_DECK;
-    int numPlayer = 1 + rand() % MAX_PLAYERS;           // 1 - 4 players
+    int numPlayer = 1 + rand() % MAX_PLAYERS;
     
     printf("players: %d, hand: %d, deck: %d, discard: %d\n", numPlayer, maxHand, maxDeck, maxDiscard);
     
@@ -139,41 +136,26 @@ int checkAdventurer(){
         return 0;
     }
     
-    // replace hand and discard with some cards available
+    // replace hand, deck, and discard with some cards available
     int card = rand() % 10;
     memset(G.hand[p], k[card], sizeof(int) * maxHand);
     
+    card = rand() % 10;
     memset(G.deck[p], k[card], sizeof(int) * maxDeck);
     
     card = rand() % 10;
     memset(G.discard[p], k[card], sizeof(int) * maxDiscard);
     
-    /**
-    // random number of Treasures in Deck
-    // 0-9: kingdom cards, 10: copper, 11: silver, 12: gold
-    card = rand() % 13;
-    for (i = 0; i < maxDeck; i++){
-        if (card < 10)
-            G.deck[p][i] = k[card];
-        else{
-            if (card == 10)
-                G.deck[p][i] = copper;
-            else if (card == 11)
-                G.deck[p][i] = silver;
-            else
-                G.deck[p][i] = gold;
-            treasures++;
-        }
-    }
-     **/
+    
+    G.deck[p][9] = gold;
+    G.deck[p][18] = copper;
     
     // change first card in hand to Adventurer
     printf("TESTING Adventurer card effect\n");
-    printf("%d treasures\n", treasures);
     if (maxHand > 0){
         G.hand[p][0] = adventurer;
         
-        if (maxDeck >= 1){
+        if (maxDeck > 0){
             if (checkAdventurerCard(p, &G, 0) == 0){
                 printf("All tests passed!\n");
             }
@@ -195,15 +177,11 @@ int checkAdventurer(){
 }
 
 
+
 int main () {
-    /**
     srand(time(NULL));
-    int failed = 0;
+    
     int a = checkAdventurer();
-     **/
-    
-    
-    
     printf("checking: %d\n", a);
     return 0;
 }
