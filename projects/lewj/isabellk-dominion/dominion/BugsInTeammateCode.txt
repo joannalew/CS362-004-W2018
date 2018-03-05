@@ -1,0 +1,18 @@
+1.	Smithy – 1 bug
+The card effect is implemented incorrectly. The expected effect is to draw 3 cards. The actual effect is drawing 2 cards. This is the result of an incorrect for-loop. Instead of iterating from [1, 3), it should iterate from [0, 3), or over any count of three.
+
+	for (i = 1; i < 3; i++)
+
+I found the bug by running my card effect test (cardtest1.c) from Assignment 3, which noted that the card effect was incorrect. I looked at the code to see if I could spot the bug, or if I needed to narrow down the problem. I saw that the for-loop was incorrect and temporarily fixed it. After fixing the for-loop, the test noted that the card effect was now correct. Therefore, there must have only been a single bug.
+
+2.	Village – 2 bugs
+The card effect is implemented incorrectly. The expected effect is to draw a card and add 2 Buys. The actual effect adds 3 Buys. This is the result of the numActions being increased incorrectly.
+
+	state->numActions = state->numActions + 3;
+
+The Village card is also being discarded incorrectly. The card is being trashed rather simply discarded. This is the result of the flag for trashing a card in discardCard being set to 1. 
+
+	discardCard(handPos, currentPlayer, state, 1);
+
+I found the bug by running my card effect test (cardtest2.c) from Assignment 3, which noted that the card effect was incorrect. I looked at the code to see if I could spot the bug, or if I needed to narrow down the problem. It looked like numActions was being increased incorrectly. After fixing numActions, the test noted that the card effect was still incorrect. I saw that discardCard was being implemented incorrectly as well, and temporarily fixed it. test noted that the card effect was now correct.
+
